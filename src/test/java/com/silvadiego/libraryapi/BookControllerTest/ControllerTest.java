@@ -18,10 +18,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class) //CRIA UM MINI CONTEXTO PARA RODAR O TESTE, COM AS CLASSES DEFINIDAS
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles("Test")
 @WebMvcTest
-@AutoConfigureMockMvc // CONFIGURA OS OBJETOS TESTE PARA FAZER AS REQUISIÇÕES
+@AutoConfigureMockMvc
 public class ControllerTest {
 
     static String BOOK_API = "/api/books";
@@ -30,7 +30,7 @@ public class ControllerTest {
     MockMvc mvc; //INJETA DEPENDENCIA
 
     @Test
-    @DisplayName("Cria o livro com sucesso!") // DEFINE O QUE ESTÁ SENDO TESTADO
+    @DisplayName("Cria o livro com sucesso!")
     public void createBookTest () throws Exception{
 
         String json = new ObjectMapper().writeValueAsString(null);
