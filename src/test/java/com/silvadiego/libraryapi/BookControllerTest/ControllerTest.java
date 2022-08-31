@@ -1,6 +1,7 @@
 package com.silvadiego.libraryapi.BookControllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.silvadiego.libraryapi.DTO.BookDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ControllerTest {
 
-    static String BOOK_API = "/api/books";
+    static String BOOK_API = "/api/books/";
 
     @Autowired
     MockMvc mvc; //INJETA DEPENDENCIA
@@ -33,7 +34,8 @@ public class ControllerTest {
     @DisplayName("Cria o livro com sucesso!")
     public void createBookTest () throws Exception{
 
-        String json = new ObjectMapper().writeValueAsString(null);
+        BookDTO dto = BookDTO.builder().author("Autor").title("Titulo ").isbn("123456789").build();
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         //DEFINE A REQUISIÇÃO
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -46,9 +48,9 @@ public class ControllerTest {
                 .perform(request)
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").isNotEmpty())
-                .andExpect(jsonPath("title").value("Meu Livro"))
-                .andExpect(jsonPath("author").value("Autor"))
-                .andExpect(jsonPath("isbn").value("123456789"))
+                .andExpect(jsonPath("title").value(dto.getTitle()))
+                .andExpect(jsonPath("author").value(dto.getAuthor()))
+                .andExpect(jsonPath("isbn").value(dto.getIsbn()))
 
                 ;
     }
