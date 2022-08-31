@@ -11,18 +11,16 @@ O projeto é uma API de biblioteca, nela será possível fazer cadastros de livr
 #### Anotações e métodos
 
 ```http
-  @ExtendWith(SpringExtension.class)
-  CRIA UM MINI CONTEXTO PARA RODAR O TESTE, COM AS CLASSES DE TESTES DEFINIDAS
-```
-```http
-@AutoConfigureMockMvc
- CONFIGURA OS OBJETOS DE TESTE PARA FAZER AS REQUISIÇÕES
+  POST "/api/books/
 ```
 
-```http
-.andExpect
- Utilizando esse método, você "desenha" um cenário esperado, ou seja, os dados que o teste espera receber para ser um teste bem sucedido.
-```
+| Parâmetro | Tipo       | Descrição                                             |
+|:----------| :--------- |:------------------------------------------------------|
+| `id`      | `string` | **Obrigatório**. O ID do item que você quer criar     |
+| `title`   | `string` | **Obrigatório**. O title do item que você quer criar  |
+| `author`  | `string` | **Obrigatório**. O author do item que você quer criar |
+| `isb`     | `string` | **Obrigatório**. O isb do item que você quer criar    |
+
 
 
 ## Autores
