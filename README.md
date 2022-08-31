@@ -1,14 +1,12 @@
 
-# Camada de Teste JUnit5
+# Controller
 
-Os testes foram escritos em modelos de testes unitários, ou seja, de forma prévia, é definido todas as saídas esperadas, como também os erros que serão lançados. Os testes serão escritos para cada rota que o projeto conter.
+A camada de Controller é utilizada para centralizar todos as requisições HTTP GET, POST, PUT, DELETE
 ## O que é o projeto?
 
 O projeto é uma API de biblioteca, nela será possível fazer cadastros de livros, quantos forem necessários. Poderá ser feito a recuperação dos dados, adição de livros, editar livros existentes, e até mesmo deletar por meio dos métodos HTTP existentes: GET, POST, PUT, DELETE
 
 ## Documentação da API
-
-#### Anotações e métodos
 
 ```http
   POST "/api/books/
