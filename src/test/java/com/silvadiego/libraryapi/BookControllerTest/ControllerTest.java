@@ -2,19 +2,23 @@ package com.silvadiego.libraryapi.BookControllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.silvadiego.libraryapi.DTO.BookDTO;
+import com.silvadiego.libraryapi.Model.Book;
+import com.silvadiego.libraryapi.Service.BookService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,11 +34,19 @@ public class ControllerTest {
     @Autowired
     MockMvc mvc; //INJETA DEPENDENCIA
 
+    @MockBean
+    BookService service;
+
     @Test
     @DisplayName("Cria o livro com sucesso!")
     public void createBookTest () throws Exception{
 
         BookDTO dto = BookDTO.builder().author("Autor").title("Titulo ").isbn("123456789").build();
+
+        Book savedBook = Book.builder().id(10L).author("Autor").title("Titulo ").isbn("123456789").build();
+
+        BDDMockito.given(service.save(Mockito.any(Book.class))).willReturn(savedBook);
+
         String json = new ObjectMapper().writeValueAsString(dto);
 
         //DEFINE A REQUISIÇÃO
