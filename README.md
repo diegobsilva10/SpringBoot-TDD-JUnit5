@@ -4,7 +4,7 @@
 
 O projeto é uma API de Biblioteca. Com essa API, podemos implementar um backend de qualquer aplicação relacionada a livros dos mais diversos generos, respeitando apenas os dados que a API permite ser inseridos.
 
-Para quem ele é?
+
 
 
 
