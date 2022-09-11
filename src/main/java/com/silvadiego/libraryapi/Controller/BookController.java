@@ -2,6 +2,7 @@ package com.silvadiego.libraryapi.Controller;
 
 import com.silvadiego.libraryapi.DTO.BookDTO;
 import com.silvadiego.libraryapi.Exceptions.ApiErrors;
+import com.silvadiego.libraryapi.Exceptions.BusinessException;
 import com.silvadiego.libraryapi.Model.Book;
 import com.silvadiego.libraryapi.Service.BookService;
 import org.hibernate.type.ObjectType;
@@ -43,5 +44,12 @@ public class BookController {
     public ApiErrors handleValidationExceptions(MethodArgumentNotValidException exception){
         BindingResult bindingResult =  exception.getBindingResult();
        return new ApiErrors(bindingResult);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleBusinessException(BusinessException excpetion){
+        return new ApiErrors(excpetion);
+
     }
 }
