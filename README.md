@@ -1,7 +1,7 @@
 
 # SpringBoot - TDD - JUnit5
-#### O que o projeto faz?
 (Em desenvolvimento)
+#### O que o projeto faz?
 
 O projeto é uma API de Biblioteca. Com essa API, podemos implementar um backend de qualquer aplicação relacionada a livros dos mais diversos generos, respeitando apenas os dados que a API permite ser inseridos.
 
