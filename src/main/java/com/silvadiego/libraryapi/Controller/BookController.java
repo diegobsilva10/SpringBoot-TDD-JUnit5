@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.Temporal;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -47,6 +48,13 @@ public class BookController {
                 .getById(id)
                 .map(book -> modelMapper.map(book, BookDTO.class) )
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id ){
+        Book book = service.getById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        service.delete(book);
     }
 
 
