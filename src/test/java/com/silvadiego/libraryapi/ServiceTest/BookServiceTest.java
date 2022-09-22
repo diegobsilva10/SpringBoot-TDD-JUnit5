@@ -10,11 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,9 +62,10 @@ public class BookServiceTest {
     }
 
     private static Book getBook() {
-        return Book.builder().isbn("123456")
+        return Book.builder()
                 .author("2 author")
                 .title("Livro 2")
+                .isbn("123456")
                 .build();
     }
 
@@ -86,6 +88,44 @@ public class BookServiceTest {
 
         //verifica que o repository nunca vai executar o método save com esse parametro book
         Mockito.verify(repository, Mockito.never()).save(book);
+    }
+
+    @Test
+    @DisplayName("Obtém um livro por ID")
+    public void getByIdTest(){
+        //cenário
+        Long id = 1L;
+        Book book = getBook();
+        book.setId(id);
+        Mockito.when(repository.findById(id)).thenReturn(Optional.of(book));
+
+        //execução
+
+        Optional<Book> foundBook = service.getById(id);
+
+        //verificação
+        assertThat(foundBook.isPresent()) .isTrue();
+        assertThat(foundBook.get().getId()).isEqualTo(id);
+        assertThat(foundBook.get().getAuthor()).isEqualTo(book.getAuthor());
+        assertThat(foundBook.get().getTitle()).isEqualTo(book.getTitle());
+        assertThat(foundBook.get().getIsbn()).isEqualTo(book.getIsbn());
+
+    }
+
+    @Test
+    @DisplayName("Retorna vazio quando não encontra um livro na base de dados")
+    public void bookNotFoundByIdTest(){
+        //cenário
+        Long id = 1L;
+        Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
+
+        //execução
+
+        Optional<Book> BookNotFound = service.getById(id);
+
+        //verificação
+        assertThat(BookNotFound.isPresent()) .isFalse();
+
     }
 
 
