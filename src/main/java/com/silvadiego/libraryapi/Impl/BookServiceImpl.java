@@ -4,6 +4,8 @@ import com.silvadiego.libraryapi.Exceptions.BusinessException;
 import com.silvadiego.libraryapi.Model.Book;
 import com.silvadiego.libraryapi.Repository.BookRepository;
 import com.silvadiego.libraryapi.Service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -50,5 +52,10 @@ public class BookServiceImpl implements BookService {
         }
         return this.repository.save(book);
 
+    }
+
+    @Override
+    public Page<Book> find(Book filter, Pageable pageRequest) {
+        return null;
     }
 }
