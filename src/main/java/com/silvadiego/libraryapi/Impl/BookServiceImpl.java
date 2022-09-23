@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private BookRepository repository;
+    final BookRepository repository;
 
     public BookServiceImpl(BookRepository repository) {
         this.repository = repository;
@@ -35,12 +35,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void delete(Book book) {
+    public void delete(Book book) throws IllegalAccessException {
+        if (book == null || book.getId() == null){
+            throw new IllegalAccessException("Book id can't be null");
+        }
+        this.repository.delete(book);
 
     }
 
     @Override
-    public Book update (Book book){
-        return null;
+    public Book update (Book book) throws IllegalAccessException {
+        if (book == null || book.getId() == null){
+            throw new IllegalAccessException("Book id can't be null");
+        }
+        return this.repository.save(book);
+
     }
 }

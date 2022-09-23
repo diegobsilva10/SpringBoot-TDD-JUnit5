@@ -5,6 +5,7 @@ import com.silvadiego.libraryapi.Impl.BookServiceImpl;
 import com.silvadiego.libraryapi.Model.Book;
 import com.silvadiego.libraryapi.Repository.BookRepository;
 import com.silvadiego.libraryapi.Service.BookService;
+import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -59,14 +60,6 @@ public class BookServiceTest {
         assertThat(savedBook.getIsbn()).isEqualTo("123456");
         assertThat(savedBook.getTitle()).isEqualTo("Livro 2");
         assertThat(savedBook.getAuthor()).isEqualTo("2 author");
-    }
-
-    private static Book getBook() {
-        return Book.builder()
-                .author("2 author")
-                .title("Livro 2")
-                .isbn("123456")
-                .build();
     }
 
     @Test
@@ -126,6 +119,43 @@ public class BookServiceTest {
         //verificação
         assertThat(BookNotFound.isPresent()) .isFalse();
 
+    }
+
+    @Test
+    @DisplayName("Deve deletar um livro")
+    public void deleteBookTeste() throws IllegalAccessException {
+        Long id = 1L;
+        Book book = Book.builder().id(id).build();
+
+        //execução
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow (() -> service.delete(book));
+
+        //verificação
+        Mockito.verify(repository, Mockito.times(1)).delete(book);
+    }
+
+    @Test
+    @DisplayName("Deve ocorrer um erro ao tentar deletar um livro inexistente")
+    public void deleteInvalidBookTest(){
+        Book book = new Book();
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalAccessException.class, () -> service.delete(book));
+
+        //verificação
+        Mockito.verify(repository, Mockito.never()).delete(book);
+
+
+    }
+
+
+
+
+    private static Book getBook() {
+        return Book.builder()
+                .author("2 author")
+                .title("Livro 2")
+                .isbn("123456")
+                .build();
     }
 
 
