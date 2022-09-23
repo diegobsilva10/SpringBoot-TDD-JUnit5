@@ -147,6 +147,43 @@ public class BookServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Deve ocorrer um erro ao tentar atualizar  um livro inexistente")
+    public void upadateInvalidBookTest(){
+        Book book = new Book();
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalAccessException.class, () -> service.update(book));
+
+        //verificação
+        Mockito.verify(repository, Mockito.never()).save(book);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar um livro")
+    public void updateBookTest() throws IllegalAccessException {
+        //cenário
+        Long id = 1l;
+
+        //livro a atualizar
+        Book updatingBook = Book.builder().id(id).build();
+
+        //simulação
+        Book updatedBook = getBook();
+        updatedBook.setId(id);
+
+        Mockito.when(repository.save(updatingBook)).thenReturn(updatedBook);
+
+        //execução
+        Book book = service.update(updatingBook);
+
+        //verificação
+        assertThat(book.getId()).isEqualTo(updatedBook.getId());
+        assertThat(book.getTitle()).isEqualTo(updatedBook.getTitle());
+        assertThat(book.getIsbn()).isEqualTo(updatedBook.getIsbn());
+        assertThat(book.getAuthor()).isEqualTo(updatedBook.getAuthor());
+    }
+
+
 
 
 
