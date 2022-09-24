@@ -1,6 +1,7 @@
 package com.silvadiego.libraryapi.BookControllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.silvadiego.libraryapi.Controller.BookController;
 import com.silvadiego.libraryapi.DTO.BookDTO;
 import com.silvadiego.libraryapi.Exceptions.BusinessException;
 import com.silvadiego.libraryapi.Model.Book;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("Test")
-@WebMvcTest
+@WebMvcTest(controllers = BookController.class)
 @AutoConfigureMockMvc
 public class ControllerTest {
 
