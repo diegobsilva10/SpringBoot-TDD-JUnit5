@@ -14,7 +14,7 @@ import java.util.Locale;
 @Builder
 public class Loan {
 
-    private String idLoan;
+    private Long idLoan;
     private String customerLoan;
     private Book book;
     private LocalDate loanDate;

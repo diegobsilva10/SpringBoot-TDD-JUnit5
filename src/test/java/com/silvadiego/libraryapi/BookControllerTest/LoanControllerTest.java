@@ -28,8 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("Test")
@@ -58,7 +57,7 @@ public class LoanControllerTest {
                 .willReturn(Optional.of(createBook));
 
 
-        Loan loan = Loan.builder().idLoan(String.valueOf(1L)).customerLoan("Diego").book(createBook).loanDate(LocalDate.now()).build();
+        Loan loan = Loan.builder().idLoan(1L).customerLoan("Diego").book(createBook).loanDate(LocalDate.now()).build();
         BDDMockito.given(loanService.save(Mockito.any(Loan.class))).willReturn(loan);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(LOAN_API)
@@ -68,8 +67,7 @@ public class LoanControllerTest {
 
         mvc.perform(request)
                 .andExpect( status().isCreated())
-                .andExpect(jsonPath("id").value(1l));
-
+                .andExpect(content().string("1"));
     }
 
 
