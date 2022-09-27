@@ -8,6 +8,7 @@ import com.silvadiego.libraryapi.Model.Book;
 import com.silvadiego.libraryapi.Model.Loan;
 import com.silvadiego.libraryapi.Service.BookService;
 import com.silvadiego.libraryapi.Service.LoanService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,10 +46,10 @@ public class LoanControllerTest {
 
     @Test
     @DisplayName("Deve realizar um empréstimo")
-    public void createLoanTest() throws Exception{
+    public void createLoanTest() throws Exception {
 
 
-        LoanDTO dto =   LoanDTO.builder().isbn("123").customer("Diego").build();
+        LoanDTO dto = LoanDTO.builder().isbn("123").customer("Diego").build();
         String json = new ObjectMapper().writeValueAsString(dto);
 
         Book createBook = Book.builder().id(1L).isbn("123").build();
@@ -66,8 +67,29 @@ public class LoanControllerTest {
                 .content(json);
 
         mvc.perform(request)
-                .andExpect( status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(content().string("1"));
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro caso tenha isbn inexistente")
+    public void invalidIsbnCreateLoanTest() throws Exception {
+
+        LoanDTO dto = LoanDTO.builder().isbn("123").customer("Diego").build();
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        BDDMockito.given(bookService.getBookByIsbn("123"))
+                .willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(LOAN_API)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", Matchers.hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value("Book not found for passed isbn"));
     }
 
 
