@@ -1,5 +1,6 @@
 package com.silvadiego.libraryapi.ServiceTest;
 
+import com.silvadiego.libraryapi.Exceptions.BusinessException;
 import com.silvadiego.libraryapi.Impl.LoanServiceImpl;
 import com.silvadiego.libraryapi.Model.Book;
 import com.silvadiego.libraryapi.Model.Loan;
@@ -16,7 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("teste")
@@ -52,6 +54,7 @@ public class LoanServiceTest {
                 .book(book)
                 .build();
 
+        when(repository.existsByBookAndNotReturned(book)).thenReturn(false);
         when(repository.save(savingLoan)).thenReturn(savedLoan);
 
         Loan Loan = loanService.save(savingLoan);
@@ -61,6 +64,33 @@ public class LoanServiceTest {
         assertThat(Loan.getCustomerLoan()).isEqualTo(savedLoan.getCustomerLoan());
         assertThat(Loan.getIdLoan()).isEqualTo(savedLoan.getIdLoan());
         assertThat(Loan.getLoanDate()).isEqualTo(savedLoan.getLoanDate());
+
+    }
+
+    @Test
+    @DisplayName("Lança erro de negócio ao salvar empréstimo com livro já emprestado")
+    public void loanedBookSaveTest(){
+
+        Book book = Book.builder().id(1L).build();
+        String customer = "Fulano";
+        //cenário
+
+        Loan savingLoan = Loan.builder()
+                .book(Book.builder().id(1L).build())
+                .customerLoan(customer)
+                .loanDate(LocalDate.now())
+                .build();
+
+        when(repository.existsByBookAndNotReturned(book)).thenReturn(true);
+
+
+      Throwable exception =  catchThrowable(()-> loanService.save(savingLoan));
+
+      assertThat(exception).isInstanceOf(BusinessException.class)
+              .hasMessage("Book already loaned");
+
+      verify(repository, never ()).save (savingLoan);
+
 
     }
 }
