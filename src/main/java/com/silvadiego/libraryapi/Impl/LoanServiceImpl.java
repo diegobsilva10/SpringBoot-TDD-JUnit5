@@ -4,8 +4,12 @@ import com.silvadiego.libraryapi.Exceptions.BusinessException;
 import com.silvadiego.libraryapi.Model.Loan;
 import com.silvadiego.libraryapi.Repository.LoanRepository;
 import com.silvadiego.libraryapi.Service.LoanService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LoanServiceImpl implements LoanService {
+    @Autowired
     private LoanRepository repository;
 
     public LoanServiceImpl(LoanRepository repository) {
