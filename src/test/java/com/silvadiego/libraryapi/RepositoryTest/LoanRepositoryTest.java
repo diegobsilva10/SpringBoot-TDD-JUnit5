@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -53,6 +55,20 @@ public class LoanRepositoryTest {
 
     }
 
+    @Test
+    @DisplayName("Deve buscar emprestimo pelo isbn do livro ou customer")
+    public void findBookIsbnOrCustomerTest() {
+        Loan loan = createAndPersistLoan(LocalDate.now());
+
+        Page<Loan> result = loanRepository.findByBookIsbnOrCustomer("123", "Fulano", PageRequest.of(0, 10));
+
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent()).contains(loan);
+        assertThat(result.getPageable().getPageSize()).isEqualTo(10);
+        assertThat(result.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(result.getTotalElements()).isEqualTo(1);
+    }
 
     public static Book createNewBook(String isbn) {
         return Book.builder()
@@ -60,6 +76,21 @@ public class LoanRepositoryTest {
                 .author("Fulano")
                 .isbn(isbn)
                 .build();
+    }
+
+    private Loan createAndPersistLoan(LocalDate loanDate) {
+        Book book = createNewBook("123");
+        entityManager.persist(book);
+
+        Loan loan = Loan.builder()
+                .book(book)
+                .customerLoan("Fulano")
+                .loanDate(loanDate)
+                .build();
+
+        entityManager.persist(loan);
+
+        return loan;
     }
 
 }
