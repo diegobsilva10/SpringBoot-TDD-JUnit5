@@ -117,6 +117,24 @@ public class LoanServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Deve atualizar um empréstimo")
+    public void updateLoanTest(){
+        Book book = createNewBook("123");
+        Loan loan = createNewLoan();
+        loan.setIdLoan(1L);
+        loan.setReturned(true);
+
+        when(repository.save(loan)).thenReturn(loan);
+
+
+        Loan updatedLoan = loanService.update(loan);
+
+        assertThat(updatedLoan.getReturned()).isTrue();
+
+        verify(repository).save(loan);
+    }
+
     public static Book createNewBook(String isbn) {
         return Book.builder()
                 .title("Livro Persistencia")
