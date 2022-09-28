@@ -110,7 +110,7 @@ public class LoanControllerTest {
                 .willReturn(Optional.of(createBook));
 
         BDDMockito.given(loanService
-                .save(Mockito.any(Loan.class)))
+                        .save(Mockito.any(Loan.class)))
                 .willThrow(new BusinessException("Book already loaned"));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(LOAN_API)
@@ -143,5 +143,20 @@ public class LoanControllerTest {
         verify(loanService, times(1)).update(loan);
     }
 
+    @Test
+    @DisplayName("Deve retornar 404 quando tentar devolver um livro inexistente")
+    public void returnInexistentBookTest() throws Exception {
+        //cenario
+        ReturnedLoanDTO dto = ReturnedLoanDTO.builder().returned(true).build();
 
+        BDDMockito.given(loanService.getById(Mockito.anyLong())).willReturn(Optional.empty());
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        mvc.perform(patch(LOAN_API.concat("/1"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNotFound());
+    }
 }
