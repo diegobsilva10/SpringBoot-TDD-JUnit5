@@ -10,11 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -90,7 +92,47 @@ public class LoanServiceTest {
               .hasMessage("Book already loaned");
 
       verify(repository, never ()).save (savingLoan);
+    }
 
+    @Test
+    @DisplayName("Deve obter as informações do empréstimo pelo id")
+    public void getLoanDetailsTest(){
+        Long id = 1L;
 
+        Book book = createNewBook("1234");
+        Loan loan = createNewLoan();
+        loan.setIdLoan(id);
+
+        Mockito.when(repository.findById(id)).thenReturn(Optional.of(loan));
+
+        Optional<Loan> result = loanService.getById(id);
+
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().getIdLoan()).isEqualTo(id);
+        assertThat(result.get().getCustomerLoan()).isEqualTo(loan.getCustomerLoan());
+        assertThat(result.get().getLoanDate()).isEqualTo(loan.getLoanDate());
+        assertThat(result.get().getBook()).isEqualTo(loan.getBook());
+
+        verify(repository).findById(id);
+
+    }
+
+    public static Book createNewBook(String isbn) {
+        return Book.builder()
+                .title("Livro Persistencia")
+                .author("Fulano")
+                .isbn(isbn)
+                .build();
+    }
+
+    public Loan createNewLoan() {
+       Book book = Book.builder().id(1L).build();
+        String customer = "customer";
+        Loan savingLoan = Loan.builder()
+                .book(book)
+                .customerLoan(customer)
+                .loanDate(LocalDate.now())
+                .build();
+        return savingLoan;
     }
 }
