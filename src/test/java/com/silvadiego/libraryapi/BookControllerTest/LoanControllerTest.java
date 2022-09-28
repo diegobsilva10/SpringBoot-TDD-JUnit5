@@ -4,9 +4,13 @@ package com.silvadiego.libraryapi.BookControllerTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.silvadiego.libraryapi.Controller.LoanController;
 import com.silvadiego.libraryapi.DTO.LoanDTO;
+import com.silvadiego.libraryapi.DTO.LoanFilterDTO;
 import com.silvadiego.libraryapi.DTO.ReturnedLoanDTO;
 import com.silvadiego.libraryapi.Exceptions.BusinessException;
 import com.silvadiego.libraryapi.Model.Book;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.silvadiego.libraryapi.Model.Loan;
 import com.silvadiego.libraryapi.Service.BookService;
 import com.silvadiego.libraryapi.Service.LoanService;
@@ -28,6 +32,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -158,5 +163,40 @@ public class LoanControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve filtrar empréstimos")
+    public void findLoanTest() throws Exception {
+        Long id = 1L;
+        Loan loan = Loan.builder()
+                .idLoan(id)
+                .returned(true)
+                .loanDate(LocalDate.now())
+                .customerLoan("Fulano")
+                .book(Book.builder()
+                        .id(id)
+                        .isbn("321")
+                        .build())
+                .build();
+
+        BDDMockito.given(loanService.find(Mockito.any(LoanFilterDTO.class), Mockito.any(Pageable.class)))
+                .willReturn(new PageImpl<Loan>(List.of(loan), PageRequest.of(0, 10), 1));
+
+        var queryString = String.format("?isbn=%s&customer=%s&page=0&size=10",
+                loan.getBook().getIsbn(), loan.getCustomerLoan());
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(LOAN_API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content", hasSize(1)))
+                .andExpect(jsonPath("totalElements").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(10))
+                .andExpect(jsonPath("pageable.pageNumber").value(0))
+        ;
     }
 }
