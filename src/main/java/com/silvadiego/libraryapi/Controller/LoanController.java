@@ -1,6 +1,7 @@
 package com.silvadiego.libraryapi.Controller;
 
 import com.silvadiego.libraryapi.DTO.LoanDTO;
+import com.silvadiego.libraryapi.DTO.ReturnedLoanDTO;
 import com.silvadiego.libraryapi.Model.Book;
 import com.silvadiego.libraryapi.Model.Loan;
 import com.silvadiego.libraryapi.Service.BookService;
@@ -26,7 +27,6 @@ public class LoanController {
         Book book = bookService.getBookByIsbn(dto.getIsbn())
                 .orElseThrow(()->
                         new ResponseStatusException( HttpStatus.BAD_REQUEST,"Book not found for passed isbn"));
-
         Loan entity = Loan.builder()
                 .book(book)
                 .customerLoan(dto.getCustomer())
@@ -35,6 +35,12 @@ public class LoanController {
         entity = loanService.save(entity);
 
         return entity.getIdLoan();
+    }
 
+    @PatchMapping("{id}")
+    public void returnBook(@PathVariable Long id, @RequestBody ReturnedLoanDTO dto){
+        Loan loan = loanService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        loan.setReturned(dto.isReturned());
+        loanService.update(loan);
     }
 }

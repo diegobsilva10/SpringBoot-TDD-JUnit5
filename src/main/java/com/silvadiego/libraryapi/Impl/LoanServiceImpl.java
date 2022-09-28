@@ -7,6 +7,8 @@ import com.silvadiego.libraryapi.Service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class LoanServiceImpl implements LoanService {
     @Autowired
@@ -23,5 +25,15 @@ public class LoanServiceImpl implements LoanService {
 
         }
         return repository.save(loan);
+    }
+
+    @Override
+    public Optional<Loan> getById(Long id) {
+        return null;
+    }
+
+    @Override
+    public void update(Loan loan) {
+
     }
 }
